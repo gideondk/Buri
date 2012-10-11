@@ -16,68 +16,118 @@
 
 - (void)viewDidLoad
 {
-//    LevelDB *ldb = [LevelDB databaseInLibraryWithName:@"test.ldb"];
-//
-//    //test string
-//    [ldb putObject:@"laval" forKey:@"string_test"];
-//    NSLog(@"String Value: %@", [ldb getString:@"string_test"]);
-//    
-//    //test dictionary
-//    [ldb putObject:[NSDictionary dictionaryWithObjectsAndKeys:@"val1", @"key1", @"val2", @"key2", nil] forKey:@"dict_test"];
-//    NSLog(@"Dictionary Value: %@", [ldb getDictionary:@"dict_test"]);
-//    [super viewDidLoad];
-//    
-//    //test invalid get
-//    NSLog(@"Should be null: %@", [ldb getString:@"does_not_exist"]);
-//    
-//    [ldb iterate:^BOOL(NSString *key, id value) {
-//        NSLog(@"value: %@", value);
-//        return TRUE;
-//    }];
-//    
-//    NSLog(@"String Value: %@", [ldb getString:@"string_test"]);
-//     
-//    [ldb clear];
-    
-    Car *porche = [[Car alloc] init];
-    [porche setName:@"Porche 911"];
-    [porche setBuildYear:2001];
-    
-    Car *lada = [[Car alloc] init];
-    [lada setName:@"Lada 1600"];
-    [lada setBuildYear:1977];
-    
-    //[Buri storeObject:lada];
-    //[Buri fetchObjectForKey:@"qweqwewqe"];
-    //[Buri
-    
-    Person *john = [[Person alloc] init];
-    [john setName:@"John"];
-    [john setLocale:@"John Doe"];
-    [john setAge:@22];
-    [john setCars:@[porche, lada]];
-    
-//    BuriWriteObject *writeObject = [[BuriWriteObject alloc] initWithBuriObject:john];
-//    NSLog(@"writeObject: %@", writeObject);
+    [self performanceTest];
+}
 
-    Buri *buri = [Buri databaseInLibraryWithName:@"TestDatabase.buri"];
-    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:buri andObjectClass:[Person class]];
+- (void)performanceTest
+{
+    perfDb = [Buri databaseInLibraryWithName:@"PerfDatabase.buri"];
     
-    [bucket storeObject:john];
+    NSLog(@"-- Fills");
+    [self simpleFill];
+    [self complexFill];
     
-    Person *fetchedJohn = [bucket fetchObjectForKey:@"John"];
-    NSLog(@"Pers: %@", fetchedJohn);
-    NSLog(@"Cars: %@", [fetchedJohn cars]);
+    NSLog(@"\n\n-- Bucket Queries");
+    [self bucketSweepTest];
     
-    [buri iterate:^BOOL(NSString *key, id value) {
-        NSLog(@"key: %@", key);
-        NSLog(@"value: %@", value);
-        return TRUE;
-    }];
+    NSLog(@"\n\n-- Index Queries");
+    [self indexKeyPerfTest];
+    [self indexObjectPerfTest];
+    [self indexRangePerfTest];
     
-    NSLog(@"%@", [bucket allKeys]);
-    NSLog(@"%@", [bucket allObjects]);
+    [perfDb deleteDatabase];
+    perfDb = nil;
+}
+
+- (void)simpleFill
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[SimpleFillObject class]];
     
+    NSMutableArray *objs = [NSMutableArray array];
+    for (int i = 0; i < 10000; i++) {
+        SimpleFillObject *obj = [[SimpleFillObject alloc] init];
+        [obj setObjectId:[self uuidString]];
+        
+        [objs addObject:obj];
+    }
+    
+    NSDate *start = [NSDate date];
+    for (SimpleFillObject *obj in objs) {
+        [bucket storeObject:obj];
+    }
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"-- Empty Database --");
+    NSLog(@"Simple fill (objects w/o indexes): %f inserts / s", (10000 / (timeInterval * -1)));
+}
+
+- (void)complexFill
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSMutableArray *persons = [NSMutableArray array];
+    for (int i = 0; i < 10000; i++) {
+        Person *dirk = [[Person alloc] init];
+        [dirk setObjectId:[self uuidString]];
+        [dirk setName:@"Dirk"];
+        [dirk setLocale:@"EN"];
+        [dirk setAge:[NSNumber numberWithInt:20 + (i % 20)]];
+        
+        [persons addObject:dirk];
+    }
+    
+    NSDate *start = [NSDate date];
+    for (Person *person in persons) {
+        [bucket storeObject:person];
+    }
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"-- 10k items in database --");
+    NSLog(@"Complex fill (objects w 2 indexes): %f inserts / s", (10000 / (timeInterval * -1)));
+}
+
+- (void)indexKeyPerfTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket fetchKeysForBinaryIndex:@"locale" value:@"EN"];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Index key retrieval: %f items / s", ([items count] / (timeInterval * -1)));
+}
+
+- (void)indexRangePerfTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket fetchObjectsForIntegerIndex:@"age" from:@21 to:@24];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Index object retrieval on range: %f items / s", ([items count] / (timeInterval * -1)));
+}
+
+- (void)bucketSweepTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket allObjects];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Bucket object sequential retrieval: %f items / s", ([items count] / (timeInterval * -1)));
+}
+
+- (void)indexObjectPerfTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket fetchObjectsForBinaryIndex:@"locale" value:@"EN"];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Index object retrieval: %f items / s", ([items count] / (timeInterval * -1)));
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -201,6 +251,42 @@
     // For example: self.myOutlet = nil;
 }
 
+- (NSString *)uuidString {
+    // Returns a UUID
+    
+    CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    CFRelease(uuid);
+    
+    return uuidStr;
+}
+
+
+@end
+
+@implementation SimpleFillObject
+
+@synthesize objectId = _objectId;
+
++(NSDictionary *)buriProperties {
+    return @{
+        BURI_KEY: @"objectId",
+    };
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+	if ((self = [super init])) {
+		_objectId = [decoder decodeObjectForKey:@"objectId"];
+	}
+    
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+	[encoder encodeObject:_objectId forKey:@"objectId"];
+}
 
 @end
 
@@ -210,10 +296,16 @@
 @synthesize cars = _cars;
 @synthesize age = _age;
 @synthesize locale = _locale;
+@synthesize objectId = _objectId;
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@: %@", _objectId, _name];
+}
 
 +(NSDictionary *)buriProperties {
     return @{
-        BURI_KEY: @"name",
+        BURI_KEY: @"objectId",
         BURI_BINARY_INDEXES: @[@"locale"],
         BURI_INTEGER_INDEXES: @[@"age"],
     };
@@ -223,10 +315,11 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
 	if ((self = [super init])) {
+        _objectId		= [decoder decodeObjectForKey:@"objectId"];
 		_name			= [decoder decodeObjectForKey:@"name"];
 		_cars			= [decoder decodeObjectForKey:@"cars"];
-		_age = [decoder decodeObjectForKey:@"age"];
-		_locale	= [decoder decodeObjectForKey:@"locale"];
+		_age            = [decoder decodeObjectForKey:@"age"];
+		_locale         = [decoder decodeObjectForKey:@"locale"];
 	}
     
 	return self;
@@ -234,6 +327,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
+    [encoder encodeObject:_objectId forKey:@"objectId"];
 	[encoder encodeObject:_name forKey:@"name"];
 	[encoder encodeObject:_cars forKey:@"cars"];
 	[encoder encodeObject:_age forKey:@"age"];
