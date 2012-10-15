@@ -9,9 +9,16 @@
 #import <leveldb/db.h>
 #import <leveldb/options.h>
 
+using namespace leveldb;
+
 #define SliceFromString(_string_) (Slice((char *)[_string_ UTF8String], [_string_ lengthOfBytesUsingEncoding:NSUTF8StringEncoding]))
 #define StringFromSlice(_slice_) ([[NSString alloc] initWithBytes:_slice_.data() length:_slice_.size() encoding:NSUTF8StringEncoding])
 
+struct LevelDB {
+    DB              *db;
+    ReadOptions		readOptions;
+    WriteOptions	writeOptions;
+};
 
 using namespace leveldb;
 
@@ -42,12 +49,13 @@ static id ObjectFromSlice(Slice v) {
     self = [super init];
     if (self) {
         _path = path;
+        levelDB = new LevelDB();
         Options options;
         options.create_if_missing = true;
-        Status status = leveldb::DB::Open(options, [_path UTF8String], &db);
+        Status status = leveldb::DB::Open(options, [_path UTF8String], &levelDB->db);
         
-        readOptions.fill_cache = false;
-        writeOptions.sync = false;
+        levelDB->readOptions.fill_cache = false;
+        levelDB->writeOptions.sync = false;
         
         if(!status.ok()) {
             NSLog(@"Problem creating Buri database: %s", status.ToString().c_str());
@@ -72,7 +80,7 @@ static id ObjectFromSlice(Slice v) {
 - (void) putObject:(id)value forKey:(NSString *)key {
     Slice k = SliceFromString(key);
     Slice v = SliceFromObject(value);
-    Status status = db->Put(writeOptions, k, v);
+    Status status = levelDB->db->Put(levelDB->writeOptions, k, v);
     
     if(!status.ok()) {
         NSLog(@"Problem storing key/value pair in database: %s", status.ToString().c_str());
@@ -84,7 +92,7 @@ static id ObjectFromSlice(Slice v) {
     
     
     Slice k = SliceFromString(key);
-    Status status = db->Get(readOptions, k, &v_string);
+    Status status = levelDB->db->Get(levelDB->readOptions, k, &v_string);
     
     if(!status.ok()) {
         if(!status.IsNotFound())
@@ -99,7 +107,7 @@ static id ObjectFromSlice(Slice v) {
 - (void)deleteObject:(NSString *)key {
     
     Slice k = SliceFromString(key);
-    Status status = db->Delete(writeOptions, k);
+    Status status = levelDB->db->Delete(levelDB->writeOptions, k);
     
     if(!status.ok()) {
         NSLog(@"Problem deleting key/value pair in database: %s", status.ToString().c_str());
@@ -124,7 +132,7 @@ static id ObjectFromSlice(Slice v) {
 }
 
 - (void)iterate:(KeyValueBlock)block {
-    Iterator* iter = db->NewIterator(ReadOptions());
+    Iterator* iter = levelDB->db->NewIterator(ReadOptions());
     for (iter->SeekToFirst(); iter->Valid(); iter->Next()) {
         Slice key = iter->key(), value = iter->value();
         NSString *k = StringFromSlice(key);
@@ -138,7 +146,7 @@ static id ObjectFromSlice(Slice v) {
 }
 
 - (void)iterateKeys:(KeyBlock)block {
-    Iterator* iter = db->NewIterator(ReadOptions());
+    Iterator* iter = levelDB->db->NewIterator(ReadOptions());
     for (iter->SeekToFirst(); iter->Valid(); iter->Next()) {
         Slice key = iter->key();
         NSString *k = StringFromSlice(key);
@@ -153,7 +161,7 @@ static id ObjectFromSlice(Slice v) {
 - (void)seekToKey:(NSString *)key andIterate:(KeyValueBlock)block
 {
     Slice k = SliceFromString(key);
-    Iterator* iter = db->NewIterator(ReadOptions());
+    Iterator* iter = levelDB->db->NewIterator(ReadOptions());
     
     for (iter->Seek(k); iter->Valid(); iter->Next()) {
         Slice key = iter->key(), value = iter->value();
@@ -170,7 +178,7 @@ static id ObjectFromSlice(Slice v) {
 - (void)seekToKey:(NSString *)key andIterateKeys:(KeyBlock)block
 {
     Slice k = SliceFromString(key);
-    Iterator* iter = db->NewIterator(ReadOptions());
+    Iterator* iter = levelDB->db->NewIterator(ReadOptions());
     
     for (iter->Seek(k); iter->Valid(); iter->Next()) {
         Slice key = iter->key();

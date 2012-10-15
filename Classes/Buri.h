@@ -8,17 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import "leveldb/db.h"
-
-using namespace leveldb;
-
 typedef BOOL (^KeyBlock)(NSString * key);
 typedef BOOL (^KeyValueBlock)(NSString * key, id value);
 
+struct LevelDB;
+
 @interface Buri : NSObject {
-    DB				*db;
-	ReadOptions		readOptions;
-	WriteOptions	writeOptions;
+    struct LevelDB  *levelDB;
 }
 
 @property (nonatomic, strong) NSString *path;
