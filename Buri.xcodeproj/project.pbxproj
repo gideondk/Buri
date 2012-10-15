@@ -24,14 +24,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2795DEAE142FAAB9008D9F83 /* LevelDB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LevelDB.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2795DEAE142FAAB9008D9F83 /* Buri.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Buri.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2795DEB2142FAAB9008D9F83 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2795DEB4142FAAB9008D9F83 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2795DEB6142FAAB9008D9F83 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		2795DEBA142FAAB9008D9F83 /* LevelDB-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LevelDB-Info.plist"; sourceTree = "<group>"; };
+		2795DEBA142FAAB9008D9F83 /* Buri-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Buri-Info.plist"; sourceTree = "<group>"; };
 		2795DEBC142FAAB9008D9F83 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2795DEBE142FAAB9008D9F83 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2795DEC0142FAAB9008D9F83 /* LevelDB-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LevelDB-Prefix.pch"; sourceTree = "<group>"; };
+		2795DEC0142FAAB9008D9F83 /* Buri-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Buri-Prefix.pch"; sourceTree = "<group>"; };
 		2795DEC1142FAAB9008D9F83 /* LevelDBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelDBAppDelegate.h; sourceTree = "<group>"; };
 		2795DEC2142FAAB9008D9F83 /* LevelDBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LevelDBAppDelegate.m; sourceTree = "<group>"; };
 		2795DEC5142FAAB9008D9F83 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 		2795DEAF142FAAB9008D9F83 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2795DEAE142FAAB9008D9F83 /* LevelDB.app */,
+				2795DEAE142FAAB9008D9F83 /* Buri.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -110,10 +110,10 @@
 		2795DEB9142FAAB9008D9F83 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				2795DEBA142FAAB9008D9F83 /* LevelDB-Info.plist */,
+				2795DEBA142FAAB9008D9F83 /* Buri-Info.plist */,
 				2795DEBB142FAAB9008D9F83 /* InfoPlist.strings */,
 				2795DEBE142FAAB9008D9F83 /* main.m */,
-				2795DEC0142FAAB9008D9F83 /* LevelDB-Prefix.pch */,
+				2795DEC0142FAAB9008D9F83 /* Buri-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2795DEAD142FAAB9008D9F83 /* LevelDB */ = {
+		2795DEAD142FAAB9008D9F83 /* Buri */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2795DECF142FAAB9008D9F83 /* Build configuration list for PBXNativeTarget "LevelDB" */;
+			buildConfigurationList = 2795DECF142FAAB9008D9F83 /* Build configuration list for PBXNativeTarget "Buri" */;
 			buildPhases = (
 				2795DEAA142FAAB9008D9F83 /* Sources */,
 				2795DEAB142FAAB9008D9F83 /* Frameworks */,
@@ -148,9 +148,9 @@
 			);
 			dependencies = (
 			);
-			name = LevelDB;
+			name = Buri;
 			productName = LevelDB;
-			productReference = 2795DEAE142FAAB9008D9F83 /* LevelDB.app */;
+			productReference = 2795DEAE142FAAB9008D9F83 /* Buri.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -161,7 +161,7 @@
 			attributes = {
 				ORGANIZATIONNAME = "Pave Labs";
 			};
-			buildConfigurationList = 2795DEA8142FAAB9008D9F83 /* Build configuration list for PBXProject "LevelDB" */;
+			buildConfigurationList = 2795DEA8142FAAB9008D9F83 /* Build configuration list for PBXProject "Buri" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -173,7 +173,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2795DEAD142FAAB9008D9F83 /* LevelDB */,
+				2795DEAD142FAAB9008D9F83 /* Buri */,
 			);
 		};
 /* End PBXProject section */
@@ -289,13 +289,13 @@
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "LevelDB/LevelDB-Prefix.pch";
-				INFOPLIST_FILE = "LevelDB/LevelDB-Info.plist";
+				GCC_PREFIX_HEADER = "LevelDB/Buri-Prefix.pch";
+				INFOPLIST_FILE = "LevelDB/Buri-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/leveldb-library\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Buri;
 				VALID_ARCHS = "armv7 armv7s i386";
 				WRAPPER_EXTENSION = app;
 			};
@@ -307,13 +307,13 @@
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "LevelDB/LevelDB-Prefix.pch";
-				INFOPLIST_FILE = "LevelDB/LevelDB-Info.plist";
+				GCC_PREFIX_HEADER = "LevelDB/Buri-Prefix.pch";
+				INFOPLIST_FILE = "LevelDB/Buri-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/leveldb-library\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Buri;
 				VALID_ARCHS = "armv7 armv7s i386";
 				WRAPPER_EXTENSION = app;
 			};
@@ -322,7 +322,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2795DEA8142FAAB9008D9F83 /* Build configuration list for PBXProject "LevelDB" */ = {
+		2795DEA8142FAAB9008D9F83 /* Build configuration list for PBXProject "Buri" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2795DECD142FAAB9008D9F83 /* Debug */,
@@ -331,7 +331,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2795DECF142FAAB9008D9F83 /* Build configuration list for PBXNativeTarget "LevelDB" */ = {
+		2795DECF142FAAB9008D9F83 /* Build configuration list for PBXNativeTarget "Buri" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2795DED0142FAAB9008D9F83 /* Debug */,
