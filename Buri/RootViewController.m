@@ -52,10 +52,30 @@
     //[Buri
     
     Person *john = [[Person alloc] init];
+    [john setObjectId:[self uuidString]];
     [john setName:@"John"];
-    [john setLocale:@"John Doe"];
+    [john setLocale:@"NL"];
     [john setAge:@22];
     [john setCars:@[porche, lada]];
+
+    
+    Person *erik = [[Person alloc] init];
+    [erik setObjectId:[self uuidString]];
+    [erik setName:@"Erik"];
+    [erik setLocale:@"NL"];
+    [erik setAge:@17];
+    
+    Person *tom = [[Person alloc] init];
+    [tom setObjectId:[self uuidString]];
+    [tom setName:@"Tom"];
+    [tom setLocale:@"NL"];
+    [tom setAge:@24];
+    
+    Person *dirk = [[Person alloc] init];
+    [dirk setObjectId:[self uuidString]];
+    [dirk setName:@"Dirk"];
+    [dirk setLocale:@"EN"];
+    [dirk setAge:@21];
     
 //    BuriWriteObject *writeObject = [[BuriWriteObject alloc] initWithBuriObject:john];
 //    NSLog(@"writeObject: %@", writeObject);
@@ -63,21 +83,130 @@
     Buri *buri = [Buri databaseInLibraryWithName:@"TestDatabase.buri"];
     BuriBucket *bucket = [[BuriBucket alloc] initWithDB:buri andObjectClass:[Person class]];
     
-    [bucket storeObject:john];
+//    [bucket storeObject:john];
+//    [bucket storeObject:erik];
+//    [bucket storeObject:tom];
+//    [bucket storeObject:dirk];
     
     Person *fetchedJohn = [bucket fetchObjectForKey:@"John"];
     NSLog(@"Pers: %@", fetchedJohn);
     NSLog(@"Cars: %@", [fetchedJohn cars]);
-    
-    [buri iterate:^BOOL(NSString *key, id value) {
-        NSLog(@"key: %@", key);
-        NSLog(@"value: %@", value);
-        return TRUE;
-    }];
-    
+
     NSLog(@"%@", [bucket allKeys]);
     NSLog(@"%@", [bucket allObjects]);
     
+    NSLog(@"%@", [bucket fetchKeysForBinaryIndex:@"locale" value:@"EN"]);
+    NSLog(@"%@", [bucket fetchObjectsForBinaryIndex:@"locale" value:@"NL"]);
+    
+    NSLog(@"%@", [bucket fetchKeysForIntegerIndex:@"age" value:@21]);
+    
+        
+    
+    //[self fill];
+    [self performanceTest];
+
+//    NSLog(@"%@", [bucket fetchKeysForBinaryIndex:@"locale" value:@"EN"]);
+
+}
+
+- (void)performanceTest
+{
+    perfDb = [Buri databaseInLibraryWithName:@"PerfDatabase.buri"];
+    
+    NSLog(@"-- Fills");
+    [self simpleFill];
+    [self complexFill];
+    
+    NSLog(@"\n\n-- Bucket Queries");
+    [self bucketSweepTest];
+    
+    NSLog(@"\n\n-- Index Queries");
+    [self indexKeyPerfTest];
+    [self indexObjectPerfTest];
+    
+    
+    [perfDb deleteDatabase];
+    perfDb = nil;
+}
+
+- (void)simpleFill
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[SimpleFillObject class]];
+    
+    NSMutableArray *objs = [NSMutableArray array];
+    for (int i = 0; i < 10000; i++) {
+        SimpleFillObject *obj = [[SimpleFillObject alloc] init];
+        [obj setObjectId:[self uuidString]];
+        
+        [objs addObject:obj];
+    }
+    
+    NSDate *start = [NSDate date];
+    for (SimpleFillObject *obj in objs) {
+        [bucket storeObject:obj];
+    }
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"-- Empty Database --");
+    NSLog(@"Simple fill (objects w/o indexes): %f inserts / s", (10000 / (timeInterval * -1)));
+}
+
+- (void)complexFill
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSMutableArray *persons = [NSMutableArray array];
+    for (int i = 0; i < 10000; i++) {
+        Person *dirk = [[Person alloc] init];
+        [dirk setObjectId:[self uuidString]];
+        [dirk setName:@"Dirk"];
+        [dirk setLocale:@"EN"];
+        [dirk setAge:@21];
+        
+        [persons addObject:dirk];
+    }
+    
+    NSDate *start = [NSDate date];
+    for (Person *person in persons) {
+        [bucket storeObject:person];
+    }
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"-- 50k items in database --");
+    NSLog(@"Complex fill (objects w 2 indexes): %f inserts / s", (10000 / (timeInterval * -1)));
+}
+
+- (void)indexKeyPerfTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket fetchKeysForBinaryIndex:@"locale" value:@"EN"];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Index key retrieval: %f items / s", ([items count] / (timeInterval * -1)));
+}
+
+- (void)bucketSweepTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket allObjects];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Bucket object sequential retrieval: %f items / s", ([items count] / (timeInterval * -1)));
+}
+
+- (void)indexObjectPerfTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket fetchObjectsForBinaryIndex:@"locale" value:@"EN"];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Index object retrieval: %f items / s", ([items count] / (timeInterval * -1)));
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -201,6 +330,42 @@
     // For example: self.myOutlet = nil;
 }
 
+- (NSString *)uuidString {
+    // Returns a UUID
+    
+    CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    CFRelease(uuid);
+    
+    return uuidStr;
+}
+
+
+@end
+
+@implementation SimpleFillObject
+
+@synthesize objectId = _objectId;
+
++(NSDictionary *)buriProperties {
+    return @{
+        BURI_KEY: @"objectId",
+    };
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+	if ((self = [super init])) {
+		_objectId = [decoder decodeObjectForKey:@"objectId"];
+	}
+    
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+	[encoder encodeObject:_objectId forKey:@"objectId"];
+}
 
 @end
 
@@ -210,10 +375,12 @@
 @synthesize cars = _cars;
 @synthesize age = _age;
 @synthesize locale = _locale;
+@synthesize objectId = _objectId;
+
 
 +(NSDictionary *)buriProperties {
     return @{
-        BURI_KEY: @"name",
+        BURI_KEY: @"objectId",
         BURI_BINARY_INDEXES: @[@"locale"],
         BURI_INTEGER_INDEXES: @[@"age"],
     };
@@ -225,8 +392,8 @@
 	if ((self = [super init])) {
 		_name			= [decoder decodeObjectForKey:@"name"];
 		_cars			= [decoder decodeObjectForKey:@"cars"];
-		_age = [decoder decodeObjectForKey:@"age"];
-		_locale	= [decoder decodeObjectForKey:@"locale"];
+		_age            = [decoder decodeObjectForKey:@"age"];
+		_locale         = [decoder decodeObjectForKey:@"locale"];
 	}
     
 	return self;

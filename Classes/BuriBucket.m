@@ -23,44 +23,176 @@
 		_buri		= aDb;
 		_name		= NSStringFromClass(aClass);
 		_usedClass	= aClass;
-		[self fetchOrCreateBucketPointer];
+		[self initBucketPointer];
 	}
 
 	return self;
 }
 
+#pragma mark -
+#pragma mark Prefix generators
+
 - (NSString *)prefixKey:(NSString *)origKey
 {
-	return [NSString stringWithFormat:@"%@::%@", _name, origKey];
+	return [NSString stringWithFormat:@"2i_%@::%@", _name, origKey];
 }
 
 - (NSString *)prefixBinaryIndexKey:(NSString *)origKey
 {
-    return [NSString stringWithFormat:@"%@_bin_index::%@", _name, origKey];
+	return [NSString stringWithFormat:@"2i_%@_bin::%@", _name, origKey];
 }
 
 - (NSString *)prefixIntegerIndexKey:(NSString *)origKey
 {
-    return [NSString stringWithFormat:@"%@_int_index::%@", _name, origKey];
+	return [NSString stringWithFormat:@"2i_%@_int::%@", _name, origKey];
 }
+
+- (NSString *)removePrefixFromKey:(NSString *)prefixedKey
+{
+	int slicePosition = [prefixedKey rangeOfString:[self bucketPointerKey]].length;
+
+	return [prefixedKey substringFromIndex:slicePosition];
+}
+
+#pragma mark -
+#pragma mark Index key generators
+
+- (NSString *)indexKeyForBinaryIndex:(BuriBinaryIndex *)index writeObject:(BuriWriteObject *)wo
+{
+	return [self prefixBinaryIndexKey:[NSString stringWithFormat:@"%@->%@->%@", [index key], [index value], [wo key]]];
+}
+
+- (NSString *)indexKeyForIntegerIndex:(BuriIntegerIndex *)index writeObject:(BuriWriteObject *)wo
+{
+	return [self prefixIntegerIndexKey:[NSString stringWithFormat:@"%@->%@->%@", [index key], [index value], [wo key]]];
+}
+
+#pragma mark -
+#pragma mark Bucket pointers
 
 - (NSString *)bucketPointerKey
 {
 	return [self prefixKey:@""];
 }
 
-- (NSString *)removePrefixFromKey:(NSString *)prefixedKey
+- (NSString *)exactBinaryIndexPointerForIndexKey:(NSString *)key value:(NSString *)value
 {
-	int slicePosition = [prefixedKey rangeOfString:[self bucketPointerKey]].length;
-	return [prefixedKey substringFromIndex:slicePosition];
+    return [self prefixBinaryIndexKey:[NSString stringWithFormat:@"%@->%@", key, value]];
 }
 
-- (void)fetchOrCreateBucketPointer
+- (NSString *)exactIntegerIndexPointerForIndexKey:(NSString *)key value:(NSNumber *)value
+{
+    return [self prefixIntegerIndexKey:[NSString stringWithFormat:@"%@->%@", key, value]];
+}
+
+- (void)initBucketPointer
 {
 	NSString *value = [_buri getObject:[self bucketPointerKey]];
+
 	if (!value) {
 		[_buri putObject:@"*" forKey:[self bucketPointerKey]];
 	}
+}
+
+- (void)initExactBinaryIndexPointerForIndexKey:(NSString *)key value:(NSString *)value
+{                  
+    NSString *idxValue = [_buri getObject:[self exactBinaryIndexPointerForIndexKey:key value:value]];
+    
+	if (!idxValue) {
+		[_buri putObject:@"*" forKey:[self exactBinaryIndexPointerForIndexKey:key value:value]];
+	}
+}
+
+- (void)initExactIntegerIndexPointerForIndexKey:(NSString *)key value:(NSNumber *)value
+{
+    NSString *idxValue = [_buri getObject:[self exactIntegerIndexPointerForIndexKey:key value:value]];
+    
+	if (!idxValue) {
+		[_buri putObject:@"*" forKey:[self exactIntegerIndexPointerForIndexKey:key value:value]];
+	}
+}
+
+
+#pragma mark -
+#pragma mark Fetch methods
+
+- (id)fetchObjectForKey:(NSString *)key
+{
+	BuriWriteObject *wo = [_buri getObject:[self prefixKey:key]];
+
+	return [wo storedObject];
+}
+
+- (NSArray *)fetchKeysForBinaryIndex:(NSString *)indexField value:(NSString *)indexValue
+{
+    NSMutableArray *keys = [[NSMutableArray alloc] init];
+    NSString *indexPointer = [self exactBinaryIndexPointerForIndexKey:indexField value:indexValue];
+    
+	[_buri seekToKey:indexPointer andIterate:^BOOL (NSString * key, id value) {
+        if ([key rangeOfString:indexPointer].location != 0)
+            return NO;
+        
+        if (value)
+            [keys addObject:value];
+        return YES;
+    }];
+    
+	// Remove pointer
+    if ([keys count] > 0) {
+        [keys removeObjectAtIndex:0];
+    }
+    
+	return keys;
+}
+
+- (NSArray *)fetchObjectsForBinaryIndex:(NSString *)indexField value:(NSString *)value
+{
+    NSArray *keys = [self fetchKeysForBinaryIndex:indexField value:value];
+    NSMutableArray *objects = [NSMutableArray array];
+    for (NSString *key in keys) {
+        id value = [_buri getObject:[self prefixKey:key]];
+        if ([value isMemberOfClass:[BuriWriteObject class]]) {
+            [objects addObject:[(BuriWriteObject *) value storedObject]];
+        }
+    }
+    
+    return objects;
+}
+
+- (NSArray *)fetchKeysForIntegerIndex:(NSString *)indexField value:(NSNumber *)indexValue
+{
+    NSMutableArray *keys = [[NSMutableArray alloc] init];
+    NSString *indexPointer = [self exactIntegerIndexPointerForIndexKey:indexField value:indexValue];
+    
+	[_buri seekToKey:indexPointer andIterate:^BOOL (NSString * key, id value) {
+        if ([key rangeOfString:indexPointer].location != 0)
+            return NO;
+        
+        if (value)
+            [keys addObject:value];
+        return YES;
+    }];
+    
+	// Remove pointer
+    if ([keys count] > 0) {
+        [keys removeObjectAtIndex:0];
+    }
+    
+	return keys;
+}
+
+- (NSArray *)fetchObjectsForIntegerIndex:(NSString *)indexField value:(NSNumber *)value
+{
+    NSArray *keys = [self fetchKeysForIntegerIndex:indexField value:value];
+    NSMutableArray *objects = [NSMutableArray array];
+    for (NSString *key in keys) {
+        id value = [_buri getObject:[self prefixKey:key]];
+        if ([value isMemberOfClass:[BuriWriteObject class]]) {
+            [objects addObject:[(BuriWriteObject *) value storedObject]];
+        }
+    }
+    
+    return objects;
 }
 
 - (NSArray *)allKeys
@@ -76,7 +208,10 @@
 		}];
 
 	// Remove pointer
-	[keys removeObjectAtIndex:0];
+    if ([keys count] > 0) {
+        [keys removeObjectAtIndex:0];
+    }
+    
 	return keys;
 }
 
@@ -98,53 +233,92 @@
 	return objects;
 }
 
-- (id)fetchObjectForKey:(NSString *)key
-{
-	BuriWriteObject *wo = [_buri getObject:[self prefixKey:key]];
-	return [wo storedObject];
-}
+#pragma mark -
+#pragma mark Store methods
 
-- (void)storeObject:(NSObject <BuriSupport> *)value
+- (void)storeObject:(NSObject <BuriSupport> *)object
 {
-	BuriWriteObject *wo = [[BuriWriteObject alloc] initWithBuriObject:value];
+	if ([object class] != _usedClass) {
+		[NSException raise:@"Storing different object type" format:@"the object type you are trying to store, should be of the %@ class", NSStringFromClass(_usedClass)];
+	}
 
-	[_buri putObject:wo forKey:[self prefixKey:[wo key]]];
+	BuriWriteObject *wo = [[BuriWriteObject alloc] initWithBuriObject:object];
+    
+    [self storeBinaryIndexesForWriteObject:wo];
+    [self storeIntegerIndexesForWriteObject:wo];
+	
+    [_buri putObject:wo forKey:[self prefixKey:[wo key]]];
 }
 
 - (void)storeBinaryIndexesForWriteObject:(BuriWriteObject *)wo
 {
-    NSArray *binaryIndexes = [wo binaryIndexes];
-    for (BuriBinaryIndex *index in binaryIndexes) {
-        
-    }
+	NSArray *binaryIndexes = [wo binaryIndexes];
+
+	for (BuriBinaryIndex *index in binaryIndexes) {
+        [self initExactBinaryIndexPointerForIndexKey:[index key] value:[index value]];
+		NSString *indexKey = [self indexKeyForBinaryIndex:index writeObject:wo];
+		[_buri putObject:[wo key] forKey:indexKey];
+	}
 }
 
-// - (id)getObject:(NSString *)key
-// {
-//    return [_db getObject:[self prefixKey:key]];
-// }
+- (void)storeIntegerIndexesForWriteObject:(BuriWriteObject *)wo
+{
+	NSArray *integerIndexes = [wo integerIndexes];
 
-// - (void)putObject:(NSObject <BuriSupport> *)storeObject
-// {
-//    if ([storeObject class] != _usedClass)
-//        [NSException raise:@"Storing different object type" format:@"the object type you are trying to store, should be of the %@ class", NSStringFromClass(_usedClass)];
-//    NSString *aKey = [storeObject valueForKey:[_usedClass primaryKey]];
-//    [self putObject:storeObject forKey:[self prefixKey:aKey]];
-// }
-//
-// - (void)deleteObjectForKey:(NSString *)key
-// {
-//    NSObject <BuriSupport> *obj = [self getObjectForKey:key];
-//    [self deleteObject:obj];
-// }
-//
-// - (void)deleteObject:(NSObject <BuriSupport> *)storeObject
-// {
-//    if ([storeObject class] != _usedClass)
-//        [NSException raise:@"Storing different object type" format:@"the object type you are trying to store, should be of the %@ class", NSStringFromClass(_usedClass)];
-//
-//    NSString *aKey = [storeObject valueForKey:[_usedClass primaryKey]];
-//    [_db deleteObject:aKey];
-// }
+	for (BuriIntegerIndex *index in integerIndexes) {
+        [self initExactIntegerIndexPointerForIndexKey:[index key] value:[index value]];
+		NSString *indexKey = [self indexKeyForIntegerIndex:index writeObject:wo];
+		[_buri putObject:[wo key] forKey:indexKey];
+	}
+}
+
+#pragma mark -
+#pragma mark Delete methods
+
+- (void)deleteObjectForKey:(NSString *)key
+{
+	BuriWriteObject *wo = [_buri getObject:[self prefixKey:key]];
+
+	if (wo) {
+		[self deleteWriteObject:wo];
+	}
+}
+
+- (void)deleteObject:(NSObject <BuriSupport> *)object
+{
+	if ([object class] != _usedClass) {
+		[NSException raise:@"Storing different object type" format:@"the object type you are trying to store, should be of the %@ class", NSStringFromClass(_usedClass)];
+	}
+
+	BuriWriteObject *wo = [[BuriWriteObject alloc] initWithBuriObject:object];
+	[self deleteWriteObject:wo];
+}
+
+- (void)deleteWriteObject:(BuriWriteObject *)wo
+{
+	[self deleteBinaryIndexesForWriteObject:wo];
+	[self deleteIntegerIndexesForWriteObject:wo];
+	[_buri deleteObject:[wo key]];
+}
+
+- (void)deleteBinaryIndexesForWriteObject:(BuriWriteObject *)wo
+{
+	NSArray *binaryIndexes = [wo binaryIndexes];
+
+	for (BuriBinaryIndex *index in binaryIndexes) {
+		NSString *indexKey = [self indexKeyForBinaryIndex:index writeObject:wo];
+		[_buri deleteObject:indexKey];
+	}
+}
+
+- (void)deleteIntegerIndexesForWriteObject:(BuriWriteObject *)wo
+{
+	NSArray *integerIndexes = [wo integerIndexes];
+
+	for (BuriIntegerIndex *index in integerIndexes) {
+		NSString *indexKey = [self indexKeyForIntegerIndex:index writeObject:wo];
+		[_buri deleteObject:indexKey];
+	}
+}
 
 @end

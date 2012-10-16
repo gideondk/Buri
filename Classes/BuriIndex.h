@@ -11,6 +11,9 @@
 	NSString	*_indexValue;
 }
 
+- (NSString *)key;
+- (NSString *)value;
+
 - (id)initWithKey:(NSString *)key data:(NSData *)data;
 - (id)initWithKey:(NSString *)key value:(NSString *)value;
 
@@ -20,6 +23,9 @@
 	NSString	*_indexKey;
 	NSNumber	*_indexValue;
 }
+
+- (NSString *)key;
+- (NSNumber *)value;
 
 - (id)initWithKey:(NSString *)key value:(NSNumber *)value;
 

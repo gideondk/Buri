@@ -25,6 +25,16 @@
 	return self;
 }
 
+- (NSString *)key
+{
+    return _indexKey;
+}
+
+- (NSString *)value
+{
+    return _indexValue;
+}
+
 - (id)initWithCoder:(NSCoder *)decoder
 {
 	if ((self = [super init])) {
@@ -53,6 +63,16 @@
 	}
 
 	return self;
+}
+
+- (NSString *)key
+{
+    return _indexKey;
+}
+
+- (NSNumber *)value
+{
+    return _indexValue;
 }
 
 - (id)initWithCoder:(NSCoder *)decoder

@@ -22,9 +22,12 @@
 
 - (id)fetchObjectForKey:(NSString *)key;
 
-- (id)fetchObjectForBinaryIndex:(NSString *)indexField value:(NSString *)value;
-- (id)fetchObjectForBinaryIndex:(NSString *)indexField data:(NSData *)value;
-- (id)fetchObjectForIntegerIndex:(NSString *)indexField value:(NSNumber *)value;
+- (NSArray *)fetchKeysForBinaryIndex:(NSString *)indexField value:(NSString *)value;
+- (NSArray *)fetchKeysForIntegerIndex:(NSString *)indexField value:(NSNumber *)value;
+
+- (NSArray *)fetchObjectsForBinaryIndex:(NSString *)indexField value:(NSString *)value;
+- (NSArray *)fetchObjectsForBinaryIndex:(NSString *)indexField data:(NSData *)value;
+- (NSArray *)fetchObjectsForIntegerIndex:(NSString *)indexField value:(NSNumber *)value;
 
 - (void)deleteForKey:(NSString *)key;
 - (void)deleteObject:(NSObject <BuriSupport> *)storeObject;

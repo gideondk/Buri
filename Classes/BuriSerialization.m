@@ -27,7 +27,11 @@
         }
         
 		_key = [buriObject performSelector:NSSelectorFromString(keyField)];
+        if (!_key) {
+            [NSException raise:@"Incorrect Buri object implementation" format:@"Nil value for key: %@", keyField];
+        }
 
+            
 		_integerIndexes = @[];
 		_binaryIndexes	= @[];
 
@@ -37,6 +41,23 @@
 			}
 
 			NSArray *indexFields = objectProperties[BURI_INTEGER_INDEXES];
+            NSMutableArray *tempIndexes = [NSMutableArray array];
+            
+            for (id indexField in indexFields) {
+				if (![buriObject respondsToSelector:NSSelectorFromString(indexField)]) {
+					[NSException raise:@"Incorrect Buri object implementation" format:@"No getter found for: %@", indexField];
+				}
+                
+				id indexValue = [buriObject performSelector:NSSelectorFromString(indexField)];
+                
+				if ([indexValue isKindOfClass:[NSNumber class]]) {
+					[tempIndexes addObject:[[BuriIntegerIndex alloc] initWithKey:indexField value:indexValue]];
+				} else {
+					[NSException raise:@"Incorrect Buri object implementation" format:@"Binary index values should be a NSString or NSData."];
+				}
+			}
+            
+            _integerIndexes = tempIndexes;
 		}
 
 		if (objectProperties[BURI_BINARY_INDEXES]) {

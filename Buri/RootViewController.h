@@ -8,8 +8,21 @@
 
 #import <UIKit/UIKit.h>
 #import "BuriSerialization.h"
+#import "Buri.h"
 
 @interface RootViewController : UITableViewController
+{
+    Buri *perfDb;
+}
+
+@end
+
+@interface SimpleFillObject : NSObject <BuriSupport>
+{
+    
+}
+
+@property (nonatomic, strong) NSString *objectId;
 
 @end
 
@@ -17,6 +30,7 @@
     
 }
 
+@property (nonatomic, strong) NSString *objectId;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSArray *cars;
 @property (nonatomic, strong) NSString *locale;
