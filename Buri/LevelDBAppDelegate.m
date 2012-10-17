@@ -1,9 +1,9 @@
 //
 //  LevelDBAppDelegate.m
-//  LevelDB
+//  Buri
 //
-//  Copyright 2011 Pave Labs. All rights reserved.
-//  See LICENCE for details.
+//  Created by Gideon de Kok on 10/10/12.
+//  Copyright (c) 2012 SpotDog. All rights reserved.
 //
 
 #import "LevelDBAppDelegate.h"

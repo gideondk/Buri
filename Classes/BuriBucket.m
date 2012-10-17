@@ -1,9 +1,9 @@
 //
 //  BuriBucket.cpp
-//  LevelDB
+//  Buri
 //
 //  Created by Gideon de Kok on 10/10/12.
-//  Copyright (c) 2012 Pave Labs. All rights reserved.
+//  Copyright (c) 2012 SpotDog. All rights reserved.
 //
 
 #import "BuriBucket.h"
@@ -42,7 +42,7 @@
 	return [NSString stringWithFormat:@"2i_%@_bin::%@", _name, origKey];
 }
 
-- (NSString *)prefixIntegerIndexKey:(NSString *)origKey
+- (NSString *)prefixNumericIndexKey:(NSString *)origKey
 {
 	return [NSString stringWithFormat:@"2i_%@_int::%@", _name, origKey];
 }
@@ -62,12 +62,12 @@
 	return [self prefixBinaryIndexKey:[NSString stringWithFormat:@"%@->%@->%@", [index key], [index value], [wo key]]];
 }
 
-- (NSString *)indexKeyForIntegerIndex:(BuriIntegerIndex *)index writeObject:(BuriWriteObject *)wo
+- (NSString *)indexKeyForNumericIndex:(BuriNumericIndex *)index writeObject:(BuriWriteObject *)wo
 {
-	return [self prefixIntegerIndexKey:[NSString stringWithFormat:@"%@->%@->%@", [index key], [index value], [wo key]]];
+	return [self prefixNumericIndexKey:[NSString stringWithFormat:@"%@->%@->%@", [index key], [index value], [wo key]]];
 }
 
-- (NSNumber *)indexValueForIntegerIndexKey:(NSString *)indexKey
+- (NSNumber *)indexValueForNumericIndexKey:(NSString *)indexKey
 {
     @try {
         NSRange firstSliceRange = [indexKey rangeOfString:@"->"];
@@ -97,14 +97,14 @@
     return [self prefixBinaryIndexKey:[NSString stringWithFormat:@"%@->%@", key, value]];
 }
 
-- (NSString *)exactIntegerIndexPointerForIndexKey:(NSString *)key value:(NSNumber *)value
+- (NSString *)exactNumericIndexPointerForIndexKey:(NSString *)key value:(NSNumber *)value
 {
-    return [self prefixIntegerIndexKey:[NSString stringWithFormat:@"%@->%@", key, value]];
+    return [self prefixNumericIndexKey:[NSString stringWithFormat:@"%@->%@", key, value]];
 }
 
-- (NSString *)rangeIntegerIndexPointerForIndexKey:(NSString *)key
+- (NSString *)rangeNumericIndexPointerForIndexKey:(NSString *)key
 {
-    return [self prefixIntegerIndexKey:[NSString stringWithFormat:@"%@->", key]];
+    return [self prefixNumericIndexKey:[NSString stringWithFormat:@"%@->", key]];
 }
 
 - (void)initBucketPointer
@@ -125,21 +125,21 @@
 	}
 }
 
-- (void)initExactIntegerIndexPointerForIndexKey:(NSString *)key value:(NSNumber *)value
+- (void)initExactNumericIndexPointerForIndexKey:(NSString *)key value:(NSNumber *)value
 {
-    NSString *idxValue = [_buri getObject:[self exactIntegerIndexPointerForIndexKey:key value:value]];
+    NSString *idxValue = [_buri getObject:[self exactNumericIndexPointerForIndexKey:key value:value]];
     
 	if (!idxValue) {
-		[_buri putObject:@"*" forKey:[self exactIntegerIndexPointerForIndexKey:key value:value]];
+		[_buri putObject:@"*" forKey:[self exactNumericIndexPointerForIndexKey:key value:value]];
 	}
 }
 
-- (void)initRangeIntegerIndexPointerForIndexKey:(NSString *)key
+- (void)initRangeNumericIndexPointerForIndexKey:(NSString *)key
 {
-    NSString *idxValue = [_buri getObject:[self rangeIntegerIndexPointerForIndexKey:key]];
+    NSString *idxValue = [_buri getObject:[self rangeNumericIndexPointerForIndexKey:key]];
     
 	if (!idxValue) {
-		[_buri putObject:@"*" forKey:[self rangeIntegerIndexPointerForIndexKey:key]];
+		[_buri putObject:@"*" forKey:[self rangeNumericIndexPointerForIndexKey:key]];
 	}
 }
 
@@ -190,10 +190,10 @@
     return objects;
 }
 
-- (NSArray *)fetchKeysForIntegerIndex:(NSString *)indexField value:(NSNumber *)indexValue
+- (NSArray *)fetchKeysForNumericIndex:(NSString *)indexField value:(NSNumber *)indexValue
 {
     NSMutableArray *keys = [[NSMutableArray alloc] init];
-    NSString *indexPointer = [self exactIntegerIndexPointerForIndexKey:indexField value:indexValue];
+    NSString *indexPointer = [self exactNumericIndexPointerForIndexKey:indexField value:indexValue];
     
 	[_buri seekToKey:indexPointer andIterate:^BOOL (NSString * key, id value) {
         if ([key rangeOfString:indexPointer].location != 0)
@@ -212,10 +212,10 @@
 	return keys;
 }
 
-- (NSArray *)fetchKeysForIntegerIndex:(NSString *)indexField from:(NSNumber *)fromValue to:(NSNumber *)toValue
+- (NSArray *)fetchKeysForNumericIndex:(NSString *)indexField from:(NSNumber *)fromValue to:(NSNumber *)toValue
 {
     NSMutableArray *keys = [[NSMutableArray alloc] init];
-    NSString *indexPointer = [self rangeIntegerIndexPointerForIndexKey:indexField];
+    NSString *indexPointer = [self rangeNumericIndexPointerForIndexKey:indexField];
     
 	[_buri seekToKey:indexPointer andIterate:^BOOL (NSString * key, id value) {
         if ([key rangeOfString:indexPointer].location != 0)
@@ -223,7 +223,7 @@
         
         if (value)
         {
-            NSNumber *numVal = [self indexValueForIntegerIndexKey:key];
+            NSNumber *numVal = [self indexValueForNumericIndexKey:key];
             
             if (numVal)
             {
@@ -240,9 +240,9 @@
 	return keys;
 }
 
-- (NSArray *)fetchObjectsForIntegerIndex:(NSString *)indexField value:(NSNumber *)value
+- (NSArray *)fetchObjectsForNumericIndex:(NSString *)indexField value:(NSNumber *)value
 {
-    NSArray *keys = [self fetchKeysForIntegerIndex:indexField value:value];
+    NSArray *keys = [self fetchKeysForNumericIndex:indexField value:value];
     NSMutableArray *objects = [NSMutableArray array];
     for (NSString *key in keys) {
         id value = [_buri getObject:[self prefixKey:key]];
@@ -254,9 +254,9 @@
     return objects;
 }
 
-- (NSArray *)fetchObjectsForIntegerIndex:(NSString *)indexField from:(NSNumber *)fromValue to:(NSNumber *)toValue
+- (NSArray *)fetchObjectsForNumericIndex:(NSString *)indexField from:(NSNumber *)fromValue to:(NSNumber *)toValue
 {
-    NSArray *keys = [self fetchKeysForIntegerIndex:indexField from:fromValue to:toValue];
+    NSArray *keys = [self fetchKeysForNumericIndex:indexField from:fromValue to:toValue];
     NSMutableArray *objects = [NSMutableArray array];
     for (NSString *key in keys) {
         id value = [_buri getObject:[self prefixKey:key]];
@@ -318,7 +318,7 @@
 	BuriWriteObject *wo = [[BuriWriteObject alloc] initWithBuriObject:object];
     
     [self storeBinaryIndexesForWriteObject:wo];
-    [self storeIntegerIndexesForWriteObject:wo];
+    [self storeNumericIndexesForWriteObject:wo];
 	
     [_buri putObject:wo forKey:[self prefixKey:[wo key]]];
 }
@@ -334,15 +334,15 @@
 	}
 }
 
-- (void)storeIntegerIndexesForWriteObject:(BuriWriteObject *)wo
+- (void)storeNumericIndexesForWriteObject:(BuriWriteObject *)wo
 {
-	NSArray *integerIndexes = [wo integerIndexes];
+	NSArray *numericIndexes = [wo numericIndexes];
 
-	for (BuriIntegerIndex *index in integerIndexes) {
-        [self initExactIntegerIndexPointerForIndexKey:[index key] value:[index value]];
-        [self initRangeIntegerIndexPointerForIndexKey:[index key]];
+	for (BuriNumericIndex *index in numericIndexes) {
+        [self initExactNumericIndexPointerForIndexKey:[index key] value:[index value]];
+        [self initRangeNumericIndexPointerForIndexKey:[index key]];
         
-		NSString *indexKey = [self indexKeyForIntegerIndex:index writeObject:wo];
+		NSString *indexKey = [self indexKeyForNumericIndex:index writeObject:wo];
 		[_buri putObject:[wo key] forKey:indexKey];
 	}
 }
@@ -372,7 +372,7 @@
 - (void)deleteWriteObject:(BuriWriteObject *)wo
 {
 	[self deleteBinaryIndexesForWriteObject:wo];
-	[self deleteIntegerIndexesForWriteObject:wo];
+	[self deleteNumericIndexesForWriteObject:wo];
 	[_buri deleteObject:[wo key]];
 }
 
@@ -386,12 +386,12 @@
 	}
 }
 
-- (void)deleteIntegerIndexesForWriteObject:(BuriWriteObject *)wo
+- (void)deleteNumericIndexesForWriteObject:(BuriWriteObject *)wo
 {
-	NSArray *integerIndexes = [wo integerIndexes];
+	NSArray *numericIndexes = [wo numericIndexes];
 
-	for (BuriIntegerIndex *index in integerIndexes) {
-		NSString *indexKey = [self indexKeyForIntegerIndex:index writeObject:wo];
+	for (BuriNumericIndex *index in numericIndexes) {
+		NSString *indexKey = [self indexKeyForNumericIndex:index writeObject:wo];
 		[_buri deleteObject:indexKey];
 	}
 }

@@ -1,9 +1,9 @@
 //
 //  BuriIndex.h
-//  LevelDB
+//  Buri
 //
 //  Created by Gideon de Kok on 10/10/12.
-//  Copyright (c) 2012 Pave Labs. All rights reserved.
+//  Copyright (c) 2012 SpotDog. All rights reserved.
 //
 
 @interface BuriBinaryIndex : NSObject {
@@ -19,7 +19,7 @@
 
 @end
 
-@interface BuriIntegerIndex : NSObject {
+@interface BuriNumericIndex : NSObject {
 	NSString	*_indexKey;
 	NSNumber	*_indexValue;
 }

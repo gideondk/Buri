@@ -1,9 +1,9 @@
 //
 //  BuriSerialization.cpp
-//  LevelDB
+//  Buri
 //
 //  Created by Gideon de Kok on 10/10/12.
-//  Copyright (c) 2012 Pave Labs. All rights reserved.
+//  Copyright (c) 2012 SpotDog. All rights reserved.
 //
 
 #include "BuriSerialization.h"
@@ -32,15 +32,15 @@
         }
 
             
-		_integerIndexes = @[];
+		_numericIndexes = @[];
 		_binaryIndexes	= @[];
 
-		if (objectProperties[BURI_INTEGER_INDEXES]) {
-			if ([objectProperties[BURI_INTEGER_INDEXES] isMemberOfClass:[NSArray class]]) {
-				[NSException raise:@"Incorrect Buri object implementation" format:@"Integer indexes should be declared in array."];
+		if (objectProperties[BURI_NUMERIC_INDEXES]) {
+			if ([objectProperties[BURI_NUMERIC_INDEXES] isMemberOfClass:[NSArray class]]) {
+				[NSException raise:@"Incorrect Buri object implementation" format:@"Numeric indexes should be declared in array."];
 			}
 
-			NSArray *indexFields = objectProperties[BURI_INTEGER_INDEXES];
+			NSArray *indexFields = objectProperties[BURI_NUMERIC_INDEXES];
             NSMutableArray *tempIndexes = [NSMutableArray array];
             
             for (id indexField in indexFields) {
@@ -51,13 +51,13 @@
 				id indexValue = [buriObject performSelector:NSSelectorFromString(indexField)];
                 
 				if ([indexValue isKindOfClass:[NSNumber class]]) {
-					[tempIndexes addObject:[[BuriIntegerIndex alloc] initWithKey:indexField value:indexValue]];
+					[tempIndexes addObject:[[BuriNumericIndex alloc] initWithKey:indexField value:indexValue]];
 				} else {
 					[NSException raise:@"Incorrect Buri object implementation" format:@"Binary index values should be a NSString or NSData."];
 				}
 			}
             
-            _integerIndexes = tempIndexes;
+            _numericIndexes = tempIndexes;
 		}
 
 		if (objectProperties[BURI_BINARY_INDEXES]) {
@@ -117,9 +117,9 @@
     return _binaryIndexes;
 }
 
-- (NSArray *)integerIndexes
+- (NSArray *)numericIndexes
 {
-    return _integerIndexes;
+    return _numericIndexes;
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -127,7 +127,7 @@
 	if ((self = [super init])) {
 		_key			= [decoder decodeObjectForKey:BURI_KEY];
 		_value			= [decoder decodeObjectForKey:BURI_VALUE];
-		_integerIndexes = [decoder decodeObjectForKey:BURI_INTEGER_INDEXES];
+		_numericIndexes = [decoder decodeObjectForKey:BURI_NUMERIC_INDEXES];
 		_binaryIndexes	= [decoder decodeObjectForKey:BURI_BINARY_INDEXES];
 		_metadata		= [decoder decodeObjectForKey:BURI_META_DATA];
 	}
@@ -139,7 +139,7 @@
 {
 	[encoder encodeObject:_key forKey:BURI_KEY];
 	[encoder encodeObject:_value forKey:BURI_VALUE];
-	[encoder encodeObject:_integerIndexes forKey:BURI_INTEGER_INDEXES];
+	[encoder encodeObject:_numericIndexes forKey:BURI_NUMERIC_INDEXES];
 	[encoder encodeObject:_binaryIndexes forKey:BURI_BINARY_INDEXES];
 	[encoder encodeObject:_metadata forKey:BURI_META_DATA];
 }

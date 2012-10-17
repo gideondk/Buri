@@ -1,5 +1,5 @@
 //
-// Prefix header for all source files of the 'LevelDB' target in the 'LevelDB' project
+// Prefix header for all source files of the 'Buri' target in the 'Buri' project
 //
 
 #import <Availability.h>
