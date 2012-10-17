@@ -109,10 +109,10 @@ Nevertheless, the current implementation should be fast enough for most implemen
 ------------ | ------------- | ------------ 
  Simple fill (objects w/o indexes)  | 490 o / s  | 1865 o / s 
  Complex fill (objects w 2 indexes) | 145 o / s  | 567 o / s 
- Bucket object sequential retrieval |	1030 o / s | 3846 o /s		      | 
- Index key retrieval	|	3367 o / s | 12684 o / s
- Index object retrieval	|	704 o / s | 2892 o / s
- Index object retrieval on numerical range |	270 o / s | 1144 o /s
+ Bucket sequential retrieval |	1030 o / s | 3846 o /s		      | 
+ 2i key retrieval	|	3367 o / s | 12684 o / s
+ 2i object retrieval	|	704 o / s | 2892 o / s
+ 2i object retrieval on numerical range |	270 o / s | 1144 o /s
 
 ## Credits
 
