@@ -14,13 +14,13 @@
 		2795DEBF142FAAB9008D9F83 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2795DEBE142FAAB9008D9F83 /* main.m */; };
 		2795DEC3142FAAB9008D9F83 /* LevelDBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2795DEC2142FAAB9008D9F83 /* LevelDBAppDelegate.m */; };
 		2795DEC6142FAAB9008D9F83 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2795DEC4142FAAB9008D9F83 /* MainWindow.xib */; };
+		2795DEC9142FAAB9008D9F83 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2795DEC8142FAAB9008D9F83 /* RootViewController.m */; };
 		2795DECC142FAAB9008D9F83 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2795DECA142FAAB9008D9F83 /* RootViewController.xib */; };
 		2795DF23142FDADF008D9F83 /* libleveldb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2795DF22142FDADF008D9F83 /* libleveldb.a */; };
 		63728D071624701400EB7FC6 /* Buri.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63728D051624701400EB7FC6 /* Buri.mm */; };
 		63728D0A1625A81A00EB7FC6 /* BuriIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 63728D081625A81A00EB7FC6 /* BuriIndex.m */; };
 		63728D0D1625A84100EB7FC6 /* BuriSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 63728D0B1625A84100EB7FC6 /* BuriSerialization.m */; };
 		63728D101625A86100EB7FC6 /* BuriBucket.m in Sources */ = {isa = PBXBuildFile; fileRef = 63728D0E1625A86100EB7FC6 /* BuriBucket.m */; };
-		63E5DBAF162EBACD000FD4AB /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E5DBAE162EBACD000FD4AB /* RootViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,17 +36,29 @@
 		2795DEC2142FAAB9008D9F83 /* LevelDBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LevelDBAppDelegate.m; path = Buri/LevelDBAppDelegate.m; sourceTree = SOURCE_ROOT; };
 		2795DEC5142FAAB9008D9F83 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		2795DEC7142FAAB9008D9F83 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RootViewController.h; path = Buri/RootViewController.h; sourceTree = SOURCE_ROOT; };
+<<<<<<< HEAD:Buri.xcodeproj/project.pbxproj
+		2795DEC8142FAAB9008D9F83 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = RootViewController.m; path = Buri/RootViewController.m; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+=======
+		2795DEC8142FAAB9008D9F83 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RootViewController.m; path = Buri/RootViewController.m; sourceTree = SOURCE_ROOT; };
+>>>>>>> 94e632b2479decb81580a14460598405e980e571:Buri.xcodeproj/project.pbxproj
 		2795DECB142FAAB9008D9F83 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/RootViewController.xib; sourceTree = "<group>"; };
 		2795DF22142FDADF008D9F83 /* libleveldb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libleveldb.a; path = "leveldb-library/libleveldb.a"; sourceTree = "<group>"; };
 		63728D051624701400EB7FC6 /* Buri.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Buri.mm; sourceTree = "<group>"; };
 		63728D061624701400EB7FC6 /* Buri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buri.h; sourceTree = "<group>"; };
+<<<<<<< HEAD:Buri.xcodeproj/project.pbxproj
 		63728D081625A81A00EB7FC6 /* BuriIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriIndex.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		63728D091625A81A00EB7FC6 /* BuriIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = BuriIndex.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		63728D0B1625A84100EB7FC6 /* BuriSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriSerialization.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		63728D0C1625A84100EB7FC6 /* BuriSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = BuriSerialization.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		63728D0E1625A86100EB7FC6 /* BuriBucket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriBucket.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+=======
+		63728D081625A81A00EB7FC6 /* BuriIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BuriIndex.m; sourceTree = "<group>"; };
+		63728D091625A81A00EB7FC6 /* BuriIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuriIndex.h; sourceTree = "<group>"; };
+		63728D0B1625A84100EB7FC6 /* BuriSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BuriSerialization.m; sourceTree = "<group>"; };
+		63728D0C1625A84100EB7FC6 /* BuriSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuriSerialization.h; sourceTree = "<group>"; };
+		63728D0E1625A86100EB7FC6 /* BuriBucket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BuriBucket.m; sourceTree = "<group>"; };
+>>>>>>> 94e632b2479decb81580a14460598405e980e571:Buri.xcodeproj/project.pbxproj
 		63728D0F1625A86100EB7FC6 /* BuriBucket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuriBucket.h; sourceTree = "<group>"; };
-		63E5DBAE162EBACD000FD4AB /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,11 +108,11 @@
 		2795DEB8142FAAB9008D9F83 /* Buri */ = {
 			isa = PBXGroup;
 			children = (
-				63E5DBAE162EBACD000FD4AB /* RootViewController.m */,
 				2795DEC1142FAAB9008D9F83 /* LevelDBAppDelegate.h */,
 				2795DEC2142FAAB9008D9F83 /* LevelDBAppDelegate.m */,
 				2795DEC4142FAAB9008D9F83 /* MainWindow.xib */,
 				2795DEC7142FAAB9008D9F83 /* RootViewController.h */,
+				2795DEC8142FAAB9008D9F83 /* RootViewController.m */,
 				2795DECA142FAAB9008D9F83 /* RootViewController.xib */,
 				2795DEB9142FAAB9008D9F83 /* Supporting Files */,
 			);
@@ -199,11 +211,11 @@
 			files = (
 				2795DEBF142FAAB9008D9F83 /* main.m in Sources */,
 				2795DEC3142FAAB9008D9F83 /* LevelDBAppDelegate.m in Sources */,
+				2795DEC9142FAAB9008D9F83 /* RootViewController.m in Sources */,
 				63728D071624701400EB7FC6 /* Buri.mm in Sources */,
 				63728D0A1625A81A00EB7FC6 /* BuriIndex.m in Sources */,
 				63728D0D1625A84100EB7FC6 /* BuriSerialization.m in Sources */,
 				63728D101625A86100EB7FC6 /* BuriBucket.m in Sources */,
-				63E5DBAF162EBACD000FD4AB /* RootViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

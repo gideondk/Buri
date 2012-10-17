@@ -1,0 +1,7 @@
+[submodule "leveldb-library"]
+	path = leveldb-library
+<<<<<<< HEAD
+	url = https://github.com/gideondk/LevelDB.git
+=======
+	url = https://github.com/gideondk/LevelDB.git 
+>>>>>>> 94e632b2479decb81580a14460598405e980e571
