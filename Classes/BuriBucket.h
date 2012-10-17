@@ -24,10 +24,13 @@
 
 - (NSArray *)fetchKeysForBinaryIndex:(NSString *)indexField value:(NSString *)value;
 - (NSArray *)fetchKeysForIntegerIndex:(NSString *)indexField value:(NSNumber *)value;
+- (NSArray *)fetchKeysForIntegerIndex:(NSString *)indexField from:(NSNumber *)fromValue to:(NSNumber *)toValue;
 
 - (NSArray *)fetchObjectsForBinaryIndex:(NSString *)indexField value:(NSString *)value;
 - (NSArray *)fetchObjectsForBinaryIndex:(NSString *)indexField data:(NSData *)value;
 - (NSArray *)fetchObjectsForIntegerIndex:(NSString *)indexField value:(NSNumber *)value;
+
+- (NSArray *)fetchObjectsForIntegerIndex:(NSString *)indexField from:(NSNumber *)fromValue to:(NSNumber *)toValue;
 
 - (void)deleteForKey:(NSString *)key;
 - (void)deleteObject:(NSObject <BuriSupport> *)storeObject;

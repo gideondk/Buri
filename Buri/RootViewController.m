@@ -16,97 +16,7 @@
 
 - (void)viewDidLoad
 {
-//    LevelDB *ldb = [LevelDB databaseInLibraryWithName:@"test.ldb"];
-//
-//    //test string
-//    [ldb putObject:@"laval" forKey:@"string_test"];
-//    NSLog(@"String Value: %@", [ldb getString:@"string_test"]);
-//    
-//    //test dictionary
-//    [ldb putObject:[NSDictionary dictionaryWithObjectsAndKeys:@"val1", @"key1", @"val2", @"key2", nil] forKey:@"dict_test"];
-//    NSLog(@"Dictionary Value: %@", [ldb getDictionary:@"dict_test"]);
-//    [super viewDidLoad];
-//    
-//    //test invalid get
-//    NSLog(@"Should be null: %@", [ldb getString:@"does_not_exist"]);
-//    
-//    [ldb iterate:^BOOL(NSString *key, id value) {
-//        NSLog(@"value: %@", value);
-//        return TRUE;
-//    }];
-//    
-//    NSLog(@"String Value: %@", [ldb getString:@"string_test"]);
-//     
-//    [ldb clear];
-    
-    Car *porche = [[Car alloc] init];
-    [porche setName:@"Porche 911"];
-    [porche setBuildYear:2001];
-    
-    Car *lada = [[Car alloc] init];
-    [lada setName:@"Lada 1600"];
-    [lada setBuildYear:1977];
-    
-    //[Buri storeObject:lada];
-    //[Buri fetchObjectForKey:@"qweqwewqe"];
-    //[Buri
-    
-    Person *john = [[Person alloc] init];
-    [john setObjectId:[self uuidString]];
-    [john setName:@"John"];
-    [john setLocale:@"NL"];
-    [john setAge:@22];
-    [john setCars:@[porche, lada]];
-
-    
-    Person *erik = [[Person alloc] init];
-    [erik setObjectId:[self uuidString]];
-    [erik setName:@"Erik"];
-    [erik setLocale:@"NL"];
-    [erik setAge:@17];
-    
-    Person *tom = [[Person alloc] init];
-    [tom setObjectId:[self uuidString]];
-    [tom setName:@"Tom"];
-    [tom setLocale:@"NL"];
-    [tom setAge:@24];
-    
-    Person *dirk = [[Person alloc] init];
-    [dirk setObjectId:[self uuidString]];
-    [dirk setName:@"Dirk"];
-    [dirk setLocale:@"EN"];
-    [dirk setAge:@21];
-    
-//    BuriWriteObject *writeObject = [[BuriWriteObject alloc] initWithBuriObject:john];
-//    NSLog(@"writeObject: %@", writeObject);
-
-    Buri *buri = [Buri databaseInLibraryWithName:@"TestDatabase.buri"];
-    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:buri andObjectClass:[Person class]];
-    
-//    [bucket storeObject:john];
-//    [bucket storeObject:erik];
-//    [bucket storeObject:tom];
-//    [bucket storeObject:dirk];
-    
-    Person *fetchedJohn = [bucket fetchObjectForKey:@"John"];
-    NSLog(@"Pers: %@", fetchedJohn);
-    NSLog(@"Cars: %@", [fetchedJohn cars]);
-
-    NSLog(@"%@", [bucket allKeys]);
-    NSLog(@"%@", [bucket allObjects]);
-    
-    NSLog(@"%@", [bucket fetchKeysForBinaryIndex:@"locale" value:@"EN"]);
-    NSLog(@"%@", [bucket fetchObjectsForBinaryIndex:@"locale" value:@"NL"]);
-    
-    NSLog(@"%@", [bucket fetchKeysForIntegerIndex:@"age" value:@21]);
-    
-        
-    
-    //[self fill];
     [self performanceTest];
-
-//    NSLog(@"%@", [bucket fetchKeysForBinaryIndex:@"locale" value:@"EN"]);
-
 }
 
 - (void)performanceTest
@@ -123,7 +33,7 @@
     NSLog(@"\n\n-- Index Queries");
     [self indexKeyPerfTest];
     [self indexObjectPerfTest];
-    
+    [self indexRangePerfTest];
     
     [perfDb deleteDatabase];
     perfDb = nil;
@@ -161,7 +71,7 @@
         [dirk setObjectId:[self uuidString]];
         [dirk setName:@"Dirk"];
         [dirk setLocale:@"EN"];
-        [dirk setAge:@21];
+        [dirk setAge:[NSNumber numberWithInt:20 + (i % 20)]];
         
         [persons addObject:dirk];
     }
@@ -172,7 +82,7 @@
     }
     NSTimeInterval timeInterval = [start timeIntervalSinceNow];
     
-    NSLog(@"-- 50k items in database --");
+    NSLog(@"-- 10k items in database --");
     NSLog(@"Complex fill (objects w 2 indexes): %f inserts / s", (10000 / (timeInterval * -1)));
 }
 
@@ -185,6 +95,17 @@
     NSTimeInterval timeInterval = [start timeIntervalSinceNow];
     
     NSLog(@"Index key retrieval: %f items / s", ([items count] / (timeInterval * -1)));
+}
+
+- (void)indexRangePerfTest
+{
+    BuriBucket *bucket = [[BuriBucket alloc] initWithDB:perfDb andObjectClass:[Person class]];
+    
+    NSDate *start = [NSDate date];
+    NSArray *items = [bucket fetchObjectsForIntegerIndex:@"age" from:@21 to:@24];
+    NSTimeInterval timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"Index object retrieval on range: %f items / s", ([items count] / (timeInterval * -1)));
 }
 
 - (void)bucketSweepTest
@@ -377,6 +298,10 @@
 @synthesize locale = _locale;
 @synthesize objectId = _objectId;
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@: %@", _objectId, _name];
+}
 
 +(NSDictionary *)buriProperties {
     return @{
@@ -390,6 +315,7 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
 	if ((self = [super init])) {
+        _objectId		= [decoder decodeObjectForKey:@"objectId"];
 		_name			= [decoder decodeObjectForKey:@"name"];
 		_cars			= [decoder decodeObjectForKey:@"cars"];
 		_age            = [decoder decodeObjectForKey:@"age"];
@@ -401,6 +327,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
+    [encoder encodeObject:_objectId forKey:@"objectId"];
 	[encoder encodeObject:_name forKey:@"name"];
 	[encoder encodeObject:_cars forKey:@"cars"];
 	[encoder encodeObject:_age forKey:@"age"];
