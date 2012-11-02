@@ -52,6 +52,7 @@ static id ObjectFromSlice(Slice v) {
         levelDB = new LevelDB();
         Options options;
         options.create_if_missing = true;
+        
         Status status = leveldb::DB::Open(options, [_path UTF8String], &levelDB->db);
         
         levelDB->readOptions.fill_cache = false;

@@ -85,6 +85,17 @@
     
     NSLog(@"-- 10k items in database --");
     NSLog(@"Complex fill (objects w 2 indexes): %f inserts / s", (10000 / (timeInterval * -1)));
+    
+    
+    start = [NSDate date];
+    for (Person *person in persons) {
+        [bucket storeObject:person];
+    }
+    timeInterval = [start timeIntervalSinceNow];
+    
+    NSLog(@"-- 10k items in database --");
+    NSLog(@"Complex refill (objects w 2 indexes): %f inserts / s", (10000 / (timeInterval * -1)));
+    
 }
 
 - (void)indexKeyPerfTest
