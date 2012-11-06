@@ -44,7 +44,7 @@
 		63728D091625A81A00EB7FC6 /* BuriIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = BuriIndex.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		63728D0B1625A84100EB7FC6 /* BuriSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriSerialization.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		63728D0C1625A84100EB7FC6 /* BuriSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = BuriSerialization.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		63728D0E1625A86100EB7FC6 /* BuriBucket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriBucket.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		63728D0E1625A86100EB7FC6 /* BuriBucket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriBucket.m; sourceTree = "<group>"; };
 		63728D0F1625A86100EB7FC6 /* BuriBucket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuriBucket.h; sourceTree = "<group>"; };
 		63E5DBAE162EBACD000FD4AB /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -299,6 +299,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/leveldb-library\"",
 				);
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = Buri;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E80CFA80-3BE6-47FB-8F50-8D8BD81A1A41";
 				VALID_ARCHS = "armv7 armv7s i386";
@@ -318,6 +319,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/leveldb-library\"",
 				);
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = Buri;
 				VALID_ARCHS = "armv7 armv7s i386";
 				WRAPPER_EXTENSION = app;

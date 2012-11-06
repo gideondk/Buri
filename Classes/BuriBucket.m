@@ -359,7 +359,7 @@
 
 - (void)deleteObjectForKey:(NSString *)key
 {
-	BuriWriteObject *wo = [_buri getObject:[self prefixKey:key]];
+	BuriWriteObject *wo = [self fetchObjectForKey:key];
 
 	if (wo) {
 		[self deleteWriteObject:wo];
@@ -369,7 +369,7 @@
 - (void)deleteObject:(NSObject <BuriSupport> *)object
 {
 	if ([object class] != _usedClass) {
-		[NSException raise:@"Storing different object type" format:@"the object type you are trying to store, should be of the %@ class", NSStringFromClass(_usedClass)];
+		[NSException raise:@"Deleting different object type" format:@"the object type you are trying to store of type: %@, should be of the %@ class", NSStringFromClass([object class]), NSStringFromClass(_usedClass)];
 	}
 
 	BuriWriteObject *wo = [[BuriWriteObject alloc] initWithBuriObject:object];
