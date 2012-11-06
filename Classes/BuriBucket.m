@@ -380,7 +380,7 @@
 {
 	[self deleteBinaryIndexesForWriteObject:wo];
 	[self deleteNumericIndexesForWriteObject:wo];
-	[_buri deleteObject:[wo key]];
+	[_buri deleteObject:[self prefixKey:[wo key]]];
 }
 
 - (void)deleteBinaryIndexesForWriteObject:(BuriWriteObject *)wo
@@ -401,6 +401,14 @@
 		NSString *indexKey = [self indexKeyForNumericIndex:index writeObject:wo];
 		[_buri deleteObject:indexKey];
 	}
+}
+
+- (void)deleteAllObjects
+{
+    [[self allObjects] enumerateObjectsUsingBlock:^(NSObject <BuriSupport> *obj, NSUInteger idx, BOOL *stop) {
+        BuriWriteObject *wo = [[BuriWriteObject alloc] initWithBuriObject:obj];
+        [self deleteObject:obj];
+    }];
 }
 
 @end

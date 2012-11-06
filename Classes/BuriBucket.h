@@ -39,5 +39,6 @@
 - (void)deleteForKey:(NSString *)key;
 - (void)deleteObject:(NSObject <BuriSupport> *)storeObject;
 
+- (void)deleteAllObjects;
 
 @end

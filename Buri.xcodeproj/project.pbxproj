@@ -40,11 +40,11 @@
 		2795DF22142FDADF008D9F83 /* libleveldb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libleveldb.a; path = "leveldb-library/libleveldb.a"; sourceTree = "<group>"; };
 		63728D051624701400EB7FC6 /* Buri.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Buri.mm; sourceTree = "<group>"; };
 		63728D061624701400EB7FC6 /* Buri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buri.h; sourceTree = "<group>"; };
-		63728D081625A81A00EB7FC6 /* BuriIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriIndex.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		63728D081625A81A00EB7FC6 /* BuriIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriIndex.m; sourceTree = "<group>"; };
 		63728D091625A81A00EB7FC6 /* BuriIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = BuriIndex.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		63728D0B1625A84100EB7FC6 /* BuriSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriSerialization.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		63728D0B1625A84100EB7FC6 /* BuriSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriSerialization.m; sourceTree = "<group>"; };
 		63728D0C1625A84100EB7FC6 /* BuriSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = BuriSerialization.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		63728D0E1625A86100EB7FC6 /* BuriBucket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriBucket.m; sourceTree = "<group>"; };
+		63728D0E1625A86100EB7FC6 /* BuriBucket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BuriBucket.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		63728D0F1625A86100EB7FC6 /* BuriBucket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuriBucket.h; sourceTree = "<group>"; };
 		63E5DBAE162EBACD000FD4AB /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
