@@ -406,7 +406,6 @@
 - (void)deleteAllObjects
 {
     [[self allObjects] enumerateObjectsUsingBlock:^(NSObject <BuriSupport> *obj, NSUInteger idx, BOOL *stop) {
-        BuriWriteObject *wo = [[BuriWriteObject alloc] initWithBuriObject:obj];
         [self deleteObject:obj];
     }];
 }
